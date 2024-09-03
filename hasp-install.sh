@@ -8,6 +8,12 @@ hasp_url=http://download.etersoft.ru/pub/Etersoft/HASP/stable/x86_64/Ubuntu/22.0
 # Define the package name
 hasp_deb=$(basename $hasp_url)
 
+# Link to this script (needed in case of privilege escalation via sudo)
+script_url=https://raw.githubusercontent.com/larionit/hasp-install/dev/hasp-install.sh
+
+# Temporary file for this script (needed in case of sudo privilege escalation)
+temp_script=$(mktemp)
+
 ### ======== Settings ======== ###
 
 ### -------- Functions -------- ###
@@ -17,6 +23,10 @@ function elevate {
     if [ "$EUID" -ne 0 ]; then
         echo "This script must be run with superuser privileges. Trying to elevate privileges with sudo."
         exec sudo bash "$0" "$@"
+            if [[ "$EUID" -ne 0 ]]; then
+                curl -fsSL "$script_url" -o "$temp_script"
+                exec sudo bash "$temp_script" "$@"
+            fi
         exit 1
     fi
 }
