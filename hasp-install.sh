@@ -51,7 +51,7 @@ function script_install {
     fi
 
     # Copy script to path
-    cp $$0 $script_path
+    cp $0 $script_path
 
     echo
     echo "this script = $0"
