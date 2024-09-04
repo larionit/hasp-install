@@ -51,10 +51,10 @@ function script_install {
     fi
 
     # Copy script to path
-    cp $temp_script $script_path
+    cp $$0 $script_path
 
     echo
-    echo "temp_script = $temp_script"
+    echo "this script = $0"
     echo
     echo "script_path = $script_path"
     echo
