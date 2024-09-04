@@ -11,9 +11,6 @@ hasp_deb=$(basename $hasp_url)
 # Link to this script (needed in case of privilege escalation via sudo)
 script_url=https://raw.githubusercontent.com/larionit/hasp-install/dev/hasp-install.sh
 
-# Temporary file for this script (needed in case of sudo privilege escalation)
-temp_script=$(mktemp)
-
 ### ======== Settings ======== ###
 
 ### -------- Functions -------- ###
@@ -22,14 +19,17 @@ temp_script=$(mktemp)
 function elevate {
     if [ "$EUID" -ne 0 ]; then
         echo "This script must be run with superuser privileges. Trying to elevate privileges with sudo."
-        echo
-        echo $script_dir
-        echo
         exec sudo bash "$0" "$@"
-            if [[ "$EUID" -ne 0 ]]; then
-                curl -fsSL "$script_url" -o "$temp_script"
-                exec sudo bash "$temp_script" "$@"
-            fi
+        exit 1
+    fi
+}
+
+# Privilege escalation function (if the script is run with a command like: "bash <(curl https://domain.name/script.sh)")
+function elevate_curl {
+    if [[ "$EUID" -ne 0 ]]; then
+        echo "This script must be run with superuser privileges. Trying to elevate privileges with sudo."
+        curl -fsSL "$script_url" -o "$temp_script"
+        exec sudo bash "$temp_script" "$@"
         exit 1
     fi
 }
@@ -131,6 +131,9 @@ script_path_sed=$(echo "$script_path" | sed 's/\//\\\//g')
 # Path to log file
 logfile_path="${script_dir}/${script_name%%.*}.log"
 
+# Temporary file for this script (needed in case of sudo privilege escalation)
+temp_script=$(mktemp)
+
 # For console output
 echo_tab='     '
 show_ip=$(hostname -I)
@@ -145,7 +148,11 @@ script_was_started_by=$(logname)
 bashrc_file="/home/${script_was_started_by}/.bashrc"
 
 # Privilege escalation
-elevate
+if [[ "$script_dir" = *"/proc/"* ]]; then
+    elevate_curl
+else
+    elevate
+fi
 
 # Start logging
 exec > >(tee -a "$logfile_path") 2>&1
