@@ -41,7 +41,7 @@ function script_install {
     script_dir_name="${script_name%.*}"
     script_dir="/opt/${script_dir_name}"
     script_path="$script_dir/$script_name"
-    
+
     # Rename the file if it already exists, if not, create a directory.
     if [ -f "$script_path" ]; then
         time=$(date +%G_%m_%d_%H_%M_%S)
@@ -53,17 +53,25 @@ function script_install {
     # Copy script to path
     cp $temp_script $script_path
 
+    echo
+    echo "temp_script = $temp_script"
+    echo
+    echo "script_path = $script_path"
+    echo
+
+    read -p "Press Enter to continue: "
+
     # Grant execute permission
     chmod +x "$script_path"
-    
+
     # Specify the path for the symbolic link
     script_symlink="/usr/local/bin/${script_name%.*}"
-    
+
     # Create a symbolic link
     if [ ! -L "$script_symlink" ]; then
         ln -s "$script_path" "$script_symlink"
     fi
-    
+
     # Run the script to be installed
     exec bash "$script_path"
 }
@@ -188,7 +196,7 @@ fi
 # Install script
 if [[ "$script_dir" = *"/tmp"* ]]; then
     script_install
-    
+
     # Deleting a temporary installation script file
     rm -f "$temp_script"
 fi
