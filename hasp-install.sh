@@ -179,14 +179,14 @@ script_was_started_by=$(logname)
 bashrc_file="/home/${script_was_started_by}/.bashrc"
 
 # Privilege escalation
-if [[ "$script_dir" = *"/proc/"* ]]; then
+if [[ "$script_dir" = *"/proc"* ]]; then
     elevate_curl
 else
     elevate
 fi
 
 # Install script
-if [[ "$script_dir" = *"/tmp/"* ]]; then
+if [[ "$script_dir" = *"/tmp"* ]]; then
     script_install
     
     # Deleting a temporary installation script file
