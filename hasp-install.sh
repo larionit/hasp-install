@@ -193,6 +193,15 @@ if [[ "$script_dir" = *"/tmp/"* ]]; then
     rm -f "$temp_script"
 fi
 
+echo
+echo "script_dir = $script_dir"
+echo
+echo "script_name = $script_name"
+echo
+echo "script_path = $script_path"
+echo
+read -p "Press Enter to contine: "
+
 # Start logging
 exec > >(tee -a "$logfile_path") 2>&1
 
