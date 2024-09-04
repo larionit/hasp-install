@@ -29,8 +29,7 @@ function elevate_curl {
     if [[ "$EUID" -ne 0 ]]; then
         echo "This script must be run with superuser privileges. Trying to elevate privileges with sudo."
         temp_script=$(mktemp)
-        #curl -fsSL "$script_url" -o "$temp_script"
-        cp "$0" "$temp_script"
+        curl -fsSL "$script_url" -o "$temp_script"
         exec sudo bash "$temp_script" "$@"
         exit 1
     fi
