@@ -28,10 +28,45 @@ function elevate {
 function elevate_curl {
     if [[ "$EUID" -ne 0 ]]; then
         echo "This script must be run with superuser privileges. Trying to elevate privileges with sudo."
-        curl -fsSL "$script_url" -o "$temp_script"
+        temp_script=$(mktemp)
+        #curl -fsSL "$script_url" -o "$temp_script"
+        cp "$0" "$temp_script"
         exec sudo bash "$temp_script" "$@"
         exit 1
     fi
+}
+
+function script_install {
+    # Specify a name for the directory to be created (we take the name of the script to be installed without extension)
+    script_name=$(basename "$script_url")
+    script_dir_name="${script_name%.*}"
+    script_dir="/opt/${script_dir_name}"
+    script_path="$script_dir/$script_name"
+    
+    # Rename the file if it already exists, if not, create a directory.
+    if [ -f "$script_path" ]; then
+        time=$(date +%G_%m_%d_%H_%M_%S)
+        cp "$script_path" "$script_path.old.$time"
+    else
+        mkdir $script_dir
+    fi
+
+    # Copy script to path
+    cp $temp_script $script_path
+
+    # Grant execute permission
+    chmod +x "$script_path"
+    
+    # Specify the path for the symbolic link
+    script_symlink="/usr/local/bin/${script_name%.*}"
+    
+    # Create a symbolic link
+    if [ ! -L "$script_symlink" ]; then
+        ln -s "$script_path" "$script_symlink"
+    fi
+    
+    # Run the script to be installed
+    exec bash "$script_path"
 }
 
 # Function for logging (when called, it outputs a message to the console containing date, time and the text passed in the first argument)
@@ -131,9 +166,6 @@ script_path_sed=$(echo "$script_path" | sed 's/\//\\\//g')
 # Path to log file
 logfile_path="${script_dir}/${script_name%%.*}.log"
 
-# Temporary file for this script (needed in case of sudo privilege escalation)
-temp_script=$(mktemp)
-
 # For console output
 echo_tab='     '
 show_ip=$(hostname -I)
@@ -152,6 +184,14 @@ if [[ "$script_dir" = *"/proc/"* ]]; then
     elevate_curl
 else
     elevate
+fi
+
+# Install script
+if [[ "$script_dir" = *"/tmp/"* ]]; then
+    script_install
+    
+    # Deleting a temporary installation script file
+    rm -f "$temp_script"
 fi
 
 # Start logging
