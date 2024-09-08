@@ -49,7 +49,7 @@ function before_reboot {
 
     # Reboot
     reboot
-    break
+    kill $$
 }
 
 # Function to disable the launch of this script when a user logs in
