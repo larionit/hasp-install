@@ -50,7 +50,14 @@ function before_reboot {
     # Reboot
     reboot
 
-    return 0
+    # Interrupt script execution
+    if [[ "$called_using_source" = "true" ]]; then
+        echo "The script was called with source, terminate script execution with 'return'"
+        return 0
+    else
+        echo "The script was run directly, terminate script execution with 'exit'"
+        exit 0
+    fi
 }
 
 # Function to disable the launch of this script when a user logs in
@@ -138,6 +145,11 @@ script_was_started_by=$(logname)
 # Path to .bashrc
 bashrc_file="/home/${script_was_started_by}/.bashrc"
 
+# Check if the script was called using source
+if [[ "$0" = "bash" || "$0" = "-bash" || "$0" = "sh" || "$0" = "-sh" ]]; then
+    called_using_source=true
+fi
+
 # Privilege escalation
 elevate
 
@@ -190,9 +202,6 @@ if [ ! -f $flag_file_resume_after_reboot ]; then
 
     # Reboot
     before_reboot
-
-    # Stop this script
-    return 0
 fi
 
 ### -------- Download and install -------- ###
