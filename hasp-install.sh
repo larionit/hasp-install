@@ -24,58 +24,6 @@ function elevate {
     fi
 }
 
-# Privilege escalation function (if the script is run with a command like: "bash <(curl https://domain.name/script.sh)")
-function elevate_curl {
-    if [[ "$EUID" -ne 0 ]]; then
-        echo "This script must be run with superuser privileges. Trying to elevate privileges with sudo."
-        temp_script=$(mktemp)
-        curl -fsSL "$script_url" -o "$temp_script"
-        exec sudo bash "$temp_script" "$@"
-        exit 1
-    fi
-}
-
-function script_install {
-    # Specify a name for the directory to be created (we take the name of the script to be installed without extension)
-    script_name=$(basename "$script_url")
-    script_dir_name="${script_name%.*}"
-    script_dir="/opt/${script_dir_name}"
-    script_path="$script_dir/$script_name"
-
-    # Rename the file if it already exists, if not, create a directory.
-    if [ -f "$script_path" ]; then
-        time=$(date +%G_%m_%d_%H_%M_%S)
-        cp "$script_path" "$script_path.old.$time"
-    else
-        mkdir $script_dir
-    fi
-
-    # Copy script to path
-    cp $0 $script_path
-
-    echo
-    echo "this script = $0"
-    echo
-    echo "script_path = $script_path"
-    echo
-
-    read -p "Press Enter to continue: "
-
-    # Grant execute permission
-    chmod +x "$script_path"
-
-    # Specify the path for the symbolic link
-    script_symlink="/usr/local/bin/${script_name%.*}"
-
-    # Create a symbolic link
-    if [ ! -L "$script_symlink" ]; then
-        ln -s "$script_path" "$script_symlink"
-    fi
-
-    # Run the script to be installed
-    exec bash "$script_path"
-}
-
 # Function for logging (when called, it outputs a message to the console containing date, time and the text passed in the first argument)
 function log {
     echo
@@ -187,28 +135,7 @@ script_was_started_by=$(logname)
 bashrc_file="/home/${script_was_started_by}/.bashrc"
 
 # Privilege escalation
-if [[ "$script_dir" = *"/proc"* ]]; then
-    elevate_curl
-else
-    elevate
-fi
-
-# Install script
-if [[ "$script_dir" = *"/tmp"* ]]; then
-    script_install
-
-    # Deleting a temporary installation script file
-    rm -f "$temp_script"
-fi
-
-echo
-echo "script_dir = $script_dir"
-echo
-echo "script_name = $script_name"
-echo
-echo "script_path = $script_path"
-echo
-read -p "Press Enter to contine: "
+elevate
 
 # Start logging
 exec > >(tee -a "$logfile_path") 2>&1
@@ -249,20 +176,16 @@ if [ ! -f $flag_file_resume_after_reboot ]; then
         fi
     done
 
-    # Reboot
-    before_reboot
-fi
-
-# Check if the reboot flag file exists
-if [ -f "$flag_file_resume_after_reboot" ]; then
-    # Start the service and enable its startup at system boot
-    systemctl daemon-reload
-    systemctl start haspd
-    systemctl enable haspd
-
     # Remove the previously downloaded package
     rm $hasp_deb
-fi
+
+    # Start the service and enable its startup at system boot
+    systemctl daemon-reload
+    systemctl enable haspd
+    systemctl start haspd
+
+    # Reboot
+    before_reboot
 
 ### -------- Download and install -------- ###
 
