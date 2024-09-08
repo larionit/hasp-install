@@ -49,6 +49,8 @@ function before_reboot {
 
     # Reboot
     reboot
+ 
+    # Stop this script
     kill $$
 }
 
