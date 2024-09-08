@@ -5,7 +5,7 @@
 
 # hasp-install
 
-Script for installing HASP security key drivers. For installation on linux, the package from [Etersoft](https://wiki.etersoft.ru/HASP) is used.
+Script for installing HASP security key drivers. When installing on linux, the package from [Etersoft](https://wiki.etersoft.ru/HASP) is used.
 
 ## Quick start
 

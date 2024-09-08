@@ -5,7 +5,7 @@
 
 # hasp-install
 
-Скрипт для установки драйверов ключей безопасности HASP. Для установки на linux используется пакет от [Etersoft](https://wiki.etersoft.ru/HASP).
+Скрипт для установки драйверов ключей безопасности HASP. При установке на linux используется пакет от [Etersoft](https://wiki.etersoft.ru/HASP).
 
 ## Быстрый старт
 
