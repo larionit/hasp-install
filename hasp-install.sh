@@ -186,6 +186,7 @@ if [ ! -f $flag_file_resume_after_reboot ]; then
 
     # Reboot
     before_reboot
+fi
 
 ### -------- Download and install -------- ###
 
