@@ -49,7 +49,7 @@ function before_reboot {
 
     # Reboot
     reboot
-    exit 0
+    break
 }
 
 # Function to disable the launch of this script when a user logs in
@@ -164,7 +164,7 @@ log "Download and install"
 if [ ! -f $flag_file_resume_after_reboot ]; then
     # Downloading the package
     curl -fsSL $hasp_url -O
-    
+
     # Installing the package
     while true; do
         dpkg --force-architecture -i "$hasp_deb" 
