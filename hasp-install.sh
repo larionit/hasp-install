@@ -49,9 +49,6 @@ function before_reboot {
 
     # Reboot
     reboot
- 
-    # Stop this script
-    kill $$
 }
 
 # Function to disable the launch of this script when a user logs in
@@ -189,6 +186,9 @@ if [ ! -f $flag_file_resume_after_reboot ]; then
 
     # Reboot
     before_reboot
+
+    # Stop this script
+    return 0
 fi
 
 ### -------- Download and install -------- ###
