@@ -52,10 +52,14 @@ function before_reboot {
 
     # Interrupt script execution
     if [[ "$called_using_source" = "true" ]]; then
+        echo
         echo "The script was called with source, terminate script execution with 'return'"
+        echo
         return 0
     else
+        echo
         echo "The script was run directly, terminate script execution with 'exit'"
+        echo
         exit 0
     fi
 }
