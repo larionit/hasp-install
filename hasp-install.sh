@@ -49,6 +49,7 @@ function before_reboot {
 
     # Reboot
     reboot
+    exit 0
 }
 
 # Function to disable the launch of this script when a user logs in
