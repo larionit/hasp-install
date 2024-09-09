@@ -1,7 +1,7 @@
 [EN] | [RU]
 
-[EN]: https://github.com/larionit/hasp-install/blob/dev/README.md
-[RU]: https://github.com/larionit/hasp-install/blob/dev/ru/README.md
+[EN]: https://github.com/larionit/hasp-install/blob/main/README.md
+[RU]: https://github.com/larionit/hasp-install/blob/main/ru/README.md
 
 # hasp-install
 
@@ -12,5 +12,5 @@
 Ubuntu:
 
 ``` bash
-bash <(curl -fsSL https://raw.githubusercontent.com/larionit/hasp-install/dev/ru/setup.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/larionit/hasp-install/main/ru/setup.sh)
 ```

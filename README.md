@@ -1,7 +1,7 @@
 [RU] | [EN]
 
-[EN]: https://github.com/larionit/hasp-install/blob/dev/README.md
-[RU]: https://github.com/larionit/hasp-install/blob/dev/ru/README.md
+[EN]: https://github.com/larionit/hasp-install/blob/main/README.md
+[RU]: https://github.com/larionit/hasp-install/blob/main/ru/README.md
 
 # hasp-install
 
@@ -12,5 +12,5 @@ Script for installing HASP security key drivers. When installing on linux, the p
 Ubuntu:
 
 ``` bash
-bash <(curl -fsSL https://raw.githubusercontent.com/larionit/hasp-install/dev/setup.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/larionit/hasp-install/main/setup.sh)
 ```

@@ -8,9 +8,6 @@ hasp_url=http://download.etersoft.ru/pub/Etersoft/HASP/stable/x86_64/Ubuntu/22.0
 # Define the package name
 hasp_deb=$(basename $hasp_url)
 
-# Link to this script (needed in case of privilege escalation via sudo)
-script_url=https://raw.githubusercontent.com/larionit/hasp-install/dev/hasp-install.sh
-
 ### ======== Settings ======== ###
 
 ### -------- Functions -------- ###
